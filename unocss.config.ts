@@ -11,7 +11,8 @@ export default defineConfig({
   },
   presets: [
     presetUno(),
-    presetIcons(),
+    presetIcons({
+    }),
     presetAttributify(),
   ],
   transformers: [

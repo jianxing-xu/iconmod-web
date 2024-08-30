@@ -21,10 +21,10 @@ onMounted(() => {
 </script>
 
 <template>
-  <WithNavbar v-if="!collection">
-    <div class="py-8 px-4 text-gray-700 text-center dark:text-dark-700">
+  <WithNavbar>
+    <div v-if="!collection" class="py-8 px-4 text-gray-700 text-center dark:text-dark-700">
       Loading...
     </div>
+    <IconSet v-else />
   </WithNavbar>
-  <IconSet v-else />
 </template>

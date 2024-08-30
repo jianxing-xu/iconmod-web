@@ -26,23 +26,26 @@ defineProps<{
       <div
         v-if="isInstalled(c.id)"
         icon-button class="!op50"
-        i-carbon-cloud-auditing
         title="Cached in browser"
-      />
+      >
+        <iconify-icon icon="carbon-cloud-auditing" />
+      </div>
       <button
         v-if="!isExcludedCollection(c)"
-        icon-button
-        :class="isFavoritedCollection(c.id) ? 'i-carbon:star-filled text-yellow' : 'i-carbon:star'"
+        icon-button text-yellow
         title="Toggle Favorite"
         @click="toggleFavoriteCollection(c.id)"
-      />
+      >
+        <iconify-icon :icon="isFavoritedCollection(c.id) ? 'carbon:star-filled' : 'carbon:star'" />
+      </button>
       <button
         v-if="!isExcludedCategory(c.category)"
-        icon-button
-        :class="isExcludedCollection(c) ? 'i-carbon:view-off text-rose' : 'i-carbon:view'"
+        icon-button text-rose
         title="Toggle Visible"
         @click="toggleExcludedCollection(c.id)"
-      />
+      >
+        <iconify-icon :icon="isExcludedCollection(c) ? 'carbon:view-off' : 'carbon:view'" />
+      </button>
     </div>
   </div>
 </template>

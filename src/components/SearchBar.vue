@@ -26,13 +26,16 @@ defineProps({
   },
 })
 
-const emit = defineEmits(['update:search', 'onKeydown'])
+const emit = defineEmits(['update:search', 'onKeydown', 'onEnter'])
 
 const input = ref<HTMLInputElement>()
 defineExpose({ input })
 
 function onKeydown(event: any) {
   emit('onKeydown', event)
+}
+function onEnter(event: any) {
+  emit('onEnter', event)
 }
 
 function update(event: any) {
@@ -60,6 +63,7 @@ function clear() {
         autocomplete="off"
         @input="update"
         @keydown="onKeydown"
+        @keydown.enter="onEnter"
       >
     </form>
 

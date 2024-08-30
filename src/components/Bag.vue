@@ -48,7 +48,6 @@ async function PackSvgs(type: PackType = 'svg') {
       "
     >
       <div>
-        <NavPlaceholder class="md:hidden" />
         <div class="text-lg">
           Bag
         </div>

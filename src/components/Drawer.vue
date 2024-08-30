@@ -11,7 +11,6 @@ const collections = computed(() => {
   }
   else {
     return [
-      { id: 'all', name: 'All' },
       { id: 'recent', name: 'Recent' },
       ...sortedCollectionsInfo.value,
     ]
@@ -21,7 +20,6 @@ const collections = computed(() => {
 
 <template>
   <div border="r base" relative>
-    <NavPlaceholder class="mb-4" />
     <div sticky top-0 bg-base z-1>
       <div flex="~ justify-between" border="b base">
         <button
