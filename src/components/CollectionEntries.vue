@@ -9,12 +9,21 @@ defineProps<{
 
 <template>
   <div class="collections-list grid gap2" p2>
-    <CollectionEntry
+    <template
       v-for="collection of collections"
       :key="collection.id"
-      :type="type"
-      :collection="collection"
-    />
+    >
+      <CollectionEntryProject
+        v-if="type === 'project'"
+        :collection="collection"
+        :type="type"
+      />
+      <CollectionEntry
+        v-else
+        :type="type"
+        :collection="collection"
+      />
+    </template>
   </div>
 </template>
 

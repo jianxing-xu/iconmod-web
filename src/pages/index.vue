@@ -4,6 +4,7 @@ import { categories, categorySearch, favoritedCollections, filteredCollections, 
 import { useIconAction } from '../hooks'
 import { useIconApiSearch } from '../hooks/useIconApiSearch'
 import { bags, iconSize, listType } from '../store'
+import { projects } from '../store/project'
 
 const searchbar = ref<{ input: HTMLElement }>()
 
@@ -33,6 +34,11 @@ function getCollections(searchString: string) {
   }
   else {
     return [
+      {
+        name: 'Projects',
+        collections: projects.value?.map(it => ({ ...it, id: it.prefix })),
+        type: 'project',
+      },
       {
         name: 'Favorites',
         type: 'favorite' as PresentType,

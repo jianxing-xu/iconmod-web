@@ -120,15 +120,16 @@ const favorited = computed(() => isFavoritedCollection(props.collection.id))
       to="/settings"
     />
 
-    <button
+    <iconify-icon
       v-if="collection.id !== 'all'"
       icon-button
-      :class="favorited ? 'i-carbon:star-filled' : 'i-carbon:star'"
+      :icon="favorited ? 'carbon:star-filled' : 'carbon:star'"
       title="Toggle Favorite"
       @click="toggleFavoriteCollection(collection.id)"
     />
     <!-- Menu -->
-    <div icon-button cursor-pointer relative i-carbon-menu title="Menu">
+    <div icon-button cursor-pointer relative icon="carbon:menu" title="Menu">
+      三
       <select
         v-model="menu"
         absolute w-full dark:bg-dark-100 text-base top-0 right-0 opacity-0 z-10

@@ -102,8 +102,8 @@ useEventListener(categoriesContainer, 'wheel', (e: WheelEvent) => {
       :style="{ left: drawerCollapsed ? '0px' : '250px' }"
       @click="drawerCollapsed = !drawerCollapsed"
     >
-      <div
-        i-carbon-chevron-left
+      <iconify-icon
+        icon="carbon-chevron-left"
         icon-button ml--1
         transition duration-300 ease-in-out
         :class="drawerCollapsed ? 'transform rotate-180' : ''"

@@ -3,12 +3,15 @@ import { specialTabs } from './data'
 import { useThemeColor } from './hooks'
 import { useIconAction } from './hooks/icon_action'
 import { activeMode, bags, showHelp, useCurrentCollection } from './store'
+import { initUser } from './store/user'
 
 const { style } = useThemeColor()
 const { copied, onSelect, current, onCopy } = useIconAction()
 const collection = useCurrentCollection()
 
 const showBag = ref(false)
+
+initUser()
 </script>
 
 <template>
@@ -61,5 +64,8 @@ const showBag = ref(false)
       :number="bags.length"
       @click="showBag = true"
     />
+
+    <!-- Login Dialog -->
+    <LoginDialog />
   </div>
 </template>

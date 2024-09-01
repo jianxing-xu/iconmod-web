@@ -3,11 +3,12 @@ import { addCollection } from 'iconify-icon'
 import { AsyncFzf } from 'fzf'
 import { favoritedCollectionIds, isFavoritedCollection, isRecentCollection, recentCollectionIds } from '../store'
 import { loadCollection } from '../store/indexedDB'
+import { mfetch } from '../utils/http'
 import { variantCategories } from './variant-category'
 
 export const specialTabs = ['all', 'recent']
 
-export type PresentType = 'favorite' | 'recent' | 'normal'
+export type PresentType = 'favorite' | 'recent' | 'normal' | 'project'
 
 export interface CollectionInfo {
   id: string
@@ -56,7 +57,9 @@ watch([categorySearch, collectionList], ([q]) => {
 
 export const sortedCollectionsInfo = computed(() =>
   filteredCollections.value
-    .sort((a, b) => favoritedCollectionIds.value.indexOf(b.id) - favoritedCollectionIds.value.indexOf(a.id)),
+    .sort((a, b) => {
+      return favoritedCollectionIds.value.indexOf(b.id) - favoritedCollectionIds.value.indexOf(a.id)
+    }),
 )
 
 export const favoritedCollections = computed(() =>
@@ -74,7 +77,7 @@ export function isInstalled(id: string) {
 }
 // install the preview icons on the homepage
 export function preInstall() {
-  fetch('/api/collections').then(r => r.json()).then((res) => {
+  mfetch('/api/collections').then(r => r.json()).then((res) => {
     collectionList.value = Object.keys(res).map(it => ({ ...res[it], id: it }))
     fzf = new AsyncFzf(Object.freeze(Object.values(collectionList.value)), {
       casing: 'case-insensitive',

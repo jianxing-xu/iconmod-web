@@ -5,6 +5,7 @@ export default defineConfig({
     'border-base': 'border-hex-888/15',
     'border-dark-only': 'border-transparent dark:border-dark-100',
     'bg-base': 'bg-white dark:bg-[#181818]',
+    'bg-base-2': 'bg-gray dark:bg-hex-888/15',
     'color-base': 'text-gray-900 dark:text-gray-300',
     'color-fade': 'text-gray-900:50 dark:text-gray-300:50',
     'icon-button': 'op50 hover:op100 my-auto',

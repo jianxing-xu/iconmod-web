@@ -1,14 +1,16 @@
 <script lang="ts">
 import { getSearchResults, isDark } from '../store'
+import { showLogin, userInfo } from '../store/user'
 
 export default defineComponent({
   setup() {
     const route = useRoute()
-
     return {
       ...getSearchResults(),
       isDark,
       isHomepage: computed(() => route.path === '/'),
+      showLogin,
+      userInfo,
     }
   },
 })
@@ -38,7 +40,13 @@ export default defineComponent({
     >
       Icônes
     </h1>
-    <RouterLink to="/upload">
+    <button v-if="!userInfo.id" class="icon-button text-4" @click="showLogin">
+      Sign In
+    </button>
+    <button v-else class="icon-button text-4">
+      Hello, {{ userInfo.name }}
+    </button>
+    <RouterLink to="/upload" class="icon-button">
       <iconify-icon icon="system-uicons:upload-alt" />
     </RouterLink>
     <RouterLink
