@@ -172,6 +172,7 @@ const favorited = computed(() => isFavoritedCollection(props.collection.id))
         </optgroup>
       </select>
     </div>
+    <slot />
     <!-- TODO: improve design of custom select -->
     <!-- <CustomSelect v-model="menu" :options="options">
       <div icon-button cursor-pointer relative i-carbon-menu title="Menu" />

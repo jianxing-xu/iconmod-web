@@ -27,6 +27,7 @@ declare module 'vue' {
     IconSet: typeof import('./components/IconSet.vue')['default']
     InstallIconSet: typeof import('./components/InstallIconSet.vue')['default']
     LoginDialog: typeof import('./components/LoginDialog.vue')['default']
+    MemberManagerDialog: typeof import('./components/MemberManagerDialog.vue')['default']
     Modal: typeof import('./components/Modal.vue')['default']
     ModalDialog: typeof import('./components/ModalDialog.vue')['default']
     Navbar: typeof import('./components/Navbar.vue')['default']

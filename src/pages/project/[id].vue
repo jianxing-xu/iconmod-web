@@ -13,6 +13,7 @@ const { onSelect } = useIconAction()
 
 const project = ref<{ name: string, id: string, icons: string[], prefix: string }>()
 const search = ref('')
+const showMemberManage = ref(false)
 
 const icons = computed(() => project?.value?.icons || [])
 const filterIcons = computed(() => icons.value.filter(it => it.includes(search.value)))
@@ -59,7 +60,11 @@ initData()
 
             <!-- Right -->
             <div v-if="project" class="flex flex-col">
-              <ActionsMenu :collection="{ ...project, id: project.prefix }" />
+              <ActionsMenu :collection="{ ...project, id: project.prefix }">
+                <div>
+                  <iconify-icon icon="tdesign:member" class="icon-button" @click="showMemberManage = true" />
+                </div>
+              </ActionsMenu>
               <div class="flex-auto" />
             </div>
           </div>
@@ -93,5 +98,8 @@ initData()
         </div>
       </div>
     </div>
+    <ModalDialog :value="showMemberManage">
+      <MemberManagerDialog :project-id="project?.id" />
+    </ModalDialog>
   </WithNavbar>
 </template>
