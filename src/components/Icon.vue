@@ -1,5 +1,6 @@
 <script lang="ts">
 import { LRUCache } from 'lru-cache'
+import { useRightClickIcon } from '../utils/useClickRightIcon'
 
 const cache = new LRUCache<string, HTMLElement>({
   max: 1_000,
@@ -43,14 +44,11 @@ const props = defineProps({
     default: '',
   },
 })
-const emit = defineEmits(['right'])
+
+const { onContextMenu } = useRightClickIcon()
 
 const el = ref<HTMLDivElement>()
 let node: HTMLElement | undefined
-
-function onContextMenu() {
-  emit('right', props.icon)
-}
 
 watchEffect(() => {
   if (node)
@@ -69,7 +67,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div ref="el" class="icon-container" :class="[props.class, props.outerClass]" @contextmenu="onContextMenu" />
+  <div ref="el" class="icon-container" :class="[props.class, props.outerClass]" @contextmenu="e => onContextMenu(props.icon, e)" />
 </template>
 
 <style>
