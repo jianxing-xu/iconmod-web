@@ -43,9 +43,14 @@ const props = defineProps({
     default: '',
   },
 })
+const emit = defineEmits(['right'])
 
 const el = ref<HTMLDivElement>()
 let node: HTMLElement | undefined
+
+function onContextMenu() {
+  emit('right', props.icon)
+}
 
 watchEffect(() => {
   if (node)
@@ -64,7 +69,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div ref="el" class="icon-container" :class="[props.class, props.outerClass]" />
+  <div ref="el" class="icon-container" :class="[props.class, props.outerClass]" @contextmenu="onContextMenu" />
 </template>
 
 <style>

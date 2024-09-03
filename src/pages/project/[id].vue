@@ -28,7 +28,7 @@ function initData() {
       delete res.data.uncategorized
       project.value = res.data
     }
-  })
+  }).catch(() => {})
 }
 initData()
 </script>
@@ -99,7 +99,7 @@ initData()
       </div>
     </div>
     <ModalDialog :value="showMemberManage">
-      <MemberManagerDialog :project-id="project?.id" />
+      <MemberManagerDialog :project-id="project?.id" @close="showMemberManage = false" />
     </ModalDialog>
   </WithNavbar>
 </template>

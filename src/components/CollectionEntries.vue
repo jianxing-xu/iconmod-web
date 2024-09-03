@@ -5,12 +5,13 @@ defineProps<{
   collections: CollectionInfo[]
   type?: PresentType
 }>()
+defineEmits(['create'])
 </script>
 
 <template>
   <div class="collections-list grid gap2" p2>
     <template
-      v-for="collection of collections"
+      v-for="(collection, i) of collections"
       :key="collection.id"
     >
       <CollectionEntryProject
@@ -18,8 +19,17 @@ defineProps<{
         :collection="collection"
         :type="type"
       />
+      <div
+        v-if="type === 'project' && i === collections.length - 1"
+        flex
+        justify-center items-center flex-col b b-dashed icon-button hfull cursor-pointer
+        @click="$emit('create')"
+      >
+        <iconify-icon icon="mdi:add-bold" />
+        Create Project
+      </div>
       <CollectionEntry
-        v-else
+        v-if="type !== 'project'"
         :type="type"
         :collection="collection"
       />

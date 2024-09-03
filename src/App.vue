@@ -3,6 +3,7 @@ import { specialTabs } from './data'
 import { useThemeColor } from './hooks'
 import { useIconAction } from './hooks/icon_action'
 import { activeMode, bags, showHelp, useCurrentCollection } from './store'
+import { showCreateProject } from './store/project'
 import { initUser } from './store/user'
 
 const { style } = useThemeColor()
@@ -55,6 +56,11 @@ initUser()
     <!-- Help -->
     <ModalDialog :value="showHelp" @close="showHelp = false">
       <HelpPage />
+    </ModalDialog>
+
+    <!-- CreateProject -->
+    <ModalDialog :value="showCreateProject" @close="showCreateProject = false">
+      <CreateProjectDialog @close="showCreateProject = false" />
     </ModalDialog>
 
     <!-- Bag Fab -->

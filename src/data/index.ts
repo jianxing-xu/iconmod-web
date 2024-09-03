@@ -84,7 +84,7 @@ export function preInstall() {
       fuzzy: 'v1',
       selector: v => `${v.name} ${v.id} ${v.category} ${v.author}`,
     })
-  })
+  }).catch(() => {})
 }
 
 export async function tryInstallFromLocal(id: string) {
@@ -106,7 +106,7 @@ export async function tryInstallFromLocal(id: string) {
 }
 
 export async function getCollectionMeta(id: string): Promise<CollectionMeta | null> {
-  let meta: CollectionMeta = await fetch(`/api/collection?prefix=${id}`).then(r => r.json())
+  let meta: CollectionMeta = await mfetch(`/api/collection?prefix=${id}`).then(r => r.json()).catch(() => {})
   if (meta) {
     meta.id = meta?.prefix as string
     const icons = Object.values(meta.categories || {}).reduce((pre, it) => pre.concat(it), [])

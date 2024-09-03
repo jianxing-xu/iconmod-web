@@ -4,7 +4,7 @@ import { categories, categorySearch, favoritedCollections, filteredCollections, 
 import { useIconAction } from '../hooks'
 import { useIconApiSearch } from '../hooks/useIconApiSearch'
 import { bags, iconSize, listType } from '../store'
-import { projects } from '../store/project'
+import { projects, showCreateProject } from '../store/project'
 
 const searchbar = ref<{ input: HTMLElement }>()
 
@@ -107,6 +107,7 @@ onMounted(() => searchbar.value?.input.focus())
               of-hidden
               :collections="c.collections"
               :type="c.type"
+              @create="showCreateProject = true"
             />
           </div>
         </template>

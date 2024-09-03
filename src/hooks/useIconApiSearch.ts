@@ -1,3 +1,5 @@
+import { mfetch } from '../utils/http'
+
 export const SEARCH_LIMIT = 200
 
 let abortC = new AbortController()
@@ -20,7 +22,7 @@ export function useIconApiSearch(keyword: Ref<string>) {
     loading.value = true
     try {
       abortC = new AbortController()
-      const result = await fetch(`/api/search?query=${keyword.value}&limit=${pageSize.value}&start=0`, { signal: abortC.signal }).then(r => r.json())
+      const result = await mfetch(`/api/search?query=${keyword.value}&limit=${pageSize.value}&start=0`, { signal: abortC.signal }).then(r => r.json()).catch(() => {})
       icons.value = result.icons
       isDone.value = result.total < SEARCH_LIMIT
     }

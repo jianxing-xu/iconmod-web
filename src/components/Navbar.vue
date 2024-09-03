@@ -40,7 +40,7 @@ export default defineComponent({
     >
       Icônes
     </h1>
-    <button v-if="!userInfo.id" class="icon-button text-4" @click="showLogin">
+    <button v-if="!userInfo?.id" class="icon-button text-4" @click="showLogin">
       Sign In
     </button>
     <button v-else class="icon-button text-4">
