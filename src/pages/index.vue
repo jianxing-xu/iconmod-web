@@ -14,7 +14,7 @@ const { icons, loading, refresh } = useIconApiSearch(categorySearch)
 const categorized = ref(getCollections(categorySearch.value))
 let categorizeDebounceTimer: NodeJS.Timeout | null = null
 
-watch([categorySearch, favoritedCollections, recentCollections], ([newVal]) => {
+watch([categorySearch, favoritedCollections, recentCollections, projects], ([newVal]) => {
   if (categorizeDebounceTimer)
     clearTimeout(categorizeDebounceTimer)
   categorizeDebounceTimer = setTimeout(() => {

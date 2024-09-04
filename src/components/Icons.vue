@@ -101,10 +101,20 @@ const { style } = useThemeColor()
   background: var(--theme-color);
   opacity: 0.1;
 }
-.checked.icons-item {
+/* .checked.icons-item {
   color: var(--theme-color);
+} */
+.checked .icon-border::before {
+  content: ' ';
+  position: absolute;
+  top: -4px;
+  left: -4px;
+  right: -4px;
+  bottom: -4px;
+  border-radius: 4px;
+  outline: 3px solid var(--theme-color);
+  opacity: 0.4;
 }
-.checked .icon-border::before,
 .icon-border:hover::before {
   content: '';
   position: absolute;

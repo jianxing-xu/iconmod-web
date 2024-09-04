@@ -14,8 +14,10 @@ const { onSelect } = useIconAction()
 const project = ref<{ name: string, id: string, icons: string[], prefix: string }>()
 const search = ref('')
 const showMemberManage = ref(false)
-const isMultiple = ref(true)
+
+const isMultiple = ref(false)
 const multipleSelected = ref(new Set<string>())
+const removing = ref(false)
 
 const icons = computed(() => project?.value?.icons || [])
 const filterIcons = computed(() => icons.value.filter(it => it.includes(search.value)))
@@ -34,6 +36,24 @@ function onSelectIcon(icon: string) {
   else {
     onSelect(icon)
   }
+}
+
+function removeIcons() {
+  if (removing.value)
+    return
+  removing.value = true
+  mfetch('/api/project/removeicons', {
+    method: 'POST',
+    body: JSON.stringify({
+      projectId: project?.value?.id,
+      icons: [...multipleSelected.value.values()].map(it => it.split(':')[1]),
+    }),
+  }).then(() => {
+    showGlobalTip('Remove successful!')
+    multipleSelected.value.clear()
+    isMultiple.value = false
+    initData()
+  }).catch(() => {}).finally(() => removing.value = false)
 }
 
 function initData() {
@@ -69,6 +89,10 @@ initData()
               <div class="text-gray-900 text-xl flex select-none dark:text-gray-200">
                 <div class="whitespace-no-wrap overflow-hidden">
                   {{ project?.name }}
+                </div>
+                <div v-if="multipleSelected.size && isMultiple" class="flex items-center ml3 icon-button text-3 cursor-pointer outline rd-1 px1" @click="removeIcons">
+                  Remove selected
+                  <iconify-icon v-show="removing" icon="svg-spinners:270-ring-with-bg" class="ml-1" />
                 </div>
               </div>
             </div>
@@ -123,7 +147,7 @@ initData()
       </div>
     </div>
     <ModalDialog :value="showMemberManage">
-      <MemberManagerDialog :project-id="project?.id" @close="showMemberManage = false" />
+      <MemberManagerDialog v-if="project?.id" :project-id="project?.id" @close="showMemberManage = false" />
     </ModalDialog>
   </WithNavbar>
 </template>
