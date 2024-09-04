@@ -12,6 +12,10 @@ defineProps({
     type: Array,
     default: () => [],
   },
+  checked: {
+    type: Set,
+    default: () => new Set(),
+  },
   size: {
     type: String,
     default: '2xl',
@@ -48,7 +52,7 @@ const { style } = useThemeColor()
   <div class="non-dragging flex flex-wrap select-none justify-center" :class="`text-${size} ${colorClass}`">
     <div
       v-for="icon of icons " :key="icon" class="non-dragging icons-item relative"
-      :class="[spacing, selected.includes(namespace + icon) ? 'active' : '']"
+      :class="[spacing, selected.includes(namespace + icon) ? 'active' : '', { checked: checked.has(namespace + icon) }]"
       @click="$emit('select', namespace + icon)"
     >
       <div v-if="display === 'list'" class="icon-border flex gap-1">
@@ -97,7 +101,10 @@ const { style } = useThemeColor()
   background: var(--theme-color);
   opacity: 0.1;
 }
-
+.checked.icons-item {
+  color: var(--theme-color);
+}
+.checked .icon-border::before,
 .icon-border:hover::before {
   content: '';
   position: absolute;

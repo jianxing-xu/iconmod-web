@@ -48,8 +48,8 @@ defineProps<{
         :title="isFavoritedCollection(collection.id) ? 'Remove from favorites' : 'Add to favorites'"
         @click.prevent="toggleFavoriteCollection(collection.id)"
       >
-        <div v-if="isFavoritedCollection(collection.id)" i-carbon-star-filled op50 group-hover="op100" />
-        <div v-else i-carbon-star op50 group-hover="op100" />
+        <iconify-icon v-if="isFavoritedCollection(collection.id)" icon="carbon:star-filled" op50 group-hover="op100" />
+        <iconify-icon v-else icon="carbon:star" op50 group-hover="op100" />
       </button>
       <button
         v-if="type === 'recent'"
@@ -58,7 +58,7 @@ defineProps<{
         :title="type === 'recent' ? 'Remove from recent' : type === 'favorite' || isFavoritedCollection(collection.id) ? 'Remove from favorites' : 'Add to favorites'"
         @click.prevent="removeRecentCollection(collection.id)"
       >
-        <div i-carbon-delete op50 group-hover="op100" />
+        <iconify-icon icon="carbon:delete" op50 group-hover="op100" />
       </button>
     </div>
   </RouterLink>

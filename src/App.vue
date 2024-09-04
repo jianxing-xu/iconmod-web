@@ -1,13 +1,15 @@
 <script setup lang='ts'>
+import AddIconToProjectDialog from './components/AddIconToProjectDialog.vue'
 import { specialTabs } from './data'
 import { useThemeColor } from './hooks'
 import { useIconAction } from './hooks/icon_action'
 import { activeMode, bags, showHelp, useCurrentCollection } from './store'
-import { showCreateProject } from './store/project'
+import { showAddToProject, showCreateProject } from './store/project'
 import { initUser } from './store/user'
+import { globaTip } from './store/global'
 
 const { style } = useThemeColor()
-const { copied, onSelect, current, onCopy } = useIconAction()
+const { onSelect, current, onCopy } = useIconAction()
 const collection = useCurrentCollection()
 
 const showBag = ref(false)
@@ -48,9 +50,9 @@ initUser()
       />
     </Modal>
 
-    <Notification :value="copied">
+    <Notification :value="!!globaTip">
       <Icon icon="mdi:check" class="inline-block mr-2 font-xl align-middle" />
-      <span class="align-middle">Copied</span>
+      <span class="align-middle">{{ globaTip }}</span>
     </Notification>
 
     <!-- Help -->
@@ -61,6 +63,11 @@ initUser()
     <!-- CreateProject -->
     <ModalDialog :value="showCreateProject" @close="showCreateProject = false">
       <CreateProjectDialog @close="showCreateProject = false" />
+    </ModalDialog>
+
+    <!-- AddBagIconsToProject -->
+    <ModalDialog :value="showAddToProject" @close="showAddToProject = false">
+      <AddIconToProjectDialog @close="showAddToProject = false" />
     </ModalDialog>
 
     <!-- Bag Fab -->

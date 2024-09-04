@@ -66,9 +66,9 @@ function onKeyDown(e: KeyboardEvent) {
         >
       </div>
       <div class="mb4">
-        <label for="projectName" class="block mb2px">Project Prefix <b text-red vertical-middle>*</b></label>
+        <label for="projectPrefix" class="block mb2px">Project Prefix <b text-red vertical-middle>*</b></label>
         <input
-          id="projectName" v-model="formData.projectPrefix" class="bg-base-2 rd-2 p1 px2 wfull min-h-40px"
+          id="projectPrefix" v-model="formData.projectPrefix" class="bg-base-2 rd-2 p1 px2 wfull min-h-40px"
           required @input="(e) => formData.projectPrefix = (e.target as HTMLInputElement).value?.replace(/[^a-z-]/g, '')"
         >
       </div>
@@ -76,7 +76,7 @@ function onKeyDown(e: KeyboardEvent) {
         <label for="searchUser" class="block mb2px">Add Member By Search</label>
 
         <div class="search-user-parent bg-base-2 rd-2 wfull mb1 min-h-40px flex flex-wrap">
-          <div h30px leading-30px mt1 ml1 px2 bg-base-2>
+          <div v-if="userInfo?.id" h30px leading-30px mt1 ml1 px2 bg-base-2>
             {{ userInfo.name }}(owner)
           </div>
 

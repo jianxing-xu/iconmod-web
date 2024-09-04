@@ -1,7 +1,7 @@
 <script setup lang='ts'>
 import ActionsMenu from '../../components/ActionsMenu.vue'
 import { useIconAction } from '../../hooks'
-import { bags, iconSize, listType } from '../../store'
+import { bags, iconSize, listType, showGlobalTip } from '../../store'
 import { mfetch } from '../../utils/http'
 
 const props = defineProps<{
@@ -14,12 +14,27 @@ const { onSelect } = useIconAction()
 const project = ref<{ name: string, id: string, icons: string[], prefix: string }>()
 const search = ref('')
 const showMemberManage = ref(false)
+const isMultiple = ref(true)
+const multipleSelected = ref(new Set<string>())
 
 const icons = computed(() => project?.value?.icons || [])
 const filterIcons = computed(() => icons.value.filter(it => it.includes(search.value)))
 
 function loadMore() {}
 function loadAll() {}
+function onSelectIcon(icon: string) {
+  if (isMultiple.value) {
+    if (multipleSelected.value.has(icon)) {
+      multipleSelected.value.delete(icon)
+    }
+    else {
+      multipleSelected.value.add(icon)
+    }
+  }
+  else {
+    onSelect(icon)
+  }
+}
 
 function initData() {
   mfetch(`/api/project/info?prefix=${props.id}`).then(r => r.json()).then((res) => {
@@ -64,6 +79,14 @@ initData()
                 <div>
                   <iconify-icon icon="tdesign:member" class="icon-button" @click="showMemberManage = true" />
                 </div>
+                <div>
+                  <iconify-icon
+                    icon="ci:select-multiple" class="icon-button"
+                    :class="{ 'text-primary': isMultiple }"
+                    title="batch select action"
+                    @click="isMultiple = !isMultiple, !isMultiple && multipleSelected.clear(), isMultiple && showGlobalTip('Multiple select actioin mode')"
+                  />
+                </div>
               </ActionsMenu>
               <div class="flex-auto" />
             </div>
@@ -78,10 +101,11 @@ initData()
             <Icons
               :icons="filterIcons.slice(0, max)"
               :selected="bags"
+              :checked="multipleSelected"
               :namespace="`${id}:`"
               :class="iconSize"
               :display="listType"
-              @select="onSelect"
+              @select="onSelectIcon"
             />
             <button v-if="icons.length > max" class="btn mx-1 my-3" @click="loadMore">
               Load More

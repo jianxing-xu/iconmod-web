@@ -2,7 +2,7 @@
 import type { PropType } from 'vue'
 import { ref } from 'vue'
 import type { CollectionMeta } from '../data'
-import { selectedPackageManager } from '../store'
+import { selectedPackageManager, showGlobalTip } from '../store'
 
 const props = defineProps({
   collection: {
@@ -23,15 +23,9 @@ const icons = {
 function selectManager(packageName: string) {
   selectedPackageManager.value = packageName
 }
-
-const status = ref(false)
-
 async function copyText() {
   const text = `${selectedPackageManager.value} ${selectedPackageManager.value !== 'npm' ? 'add' : 'i'} -D @iconify-json/${props.collection.id}`
-  status.value = true
-  setTimeout(() => {
-    status.value = false
-  }, 2000)
+  showGlobalTip(text)
 
   if (text) {
     try {
@@ -76,10 +70,6 @@ async function copyText() {
         </code>
         <IconButton icon="carbon:copy" @click="copyText" />
       </div>
-      <Notification :value="status">
-        <Icon icon="mdi:check" class="inline-block mr-2 font-xl align-middle" />
-        <span class="align-middle">Copied</span>
-      </Notification>
     </div>
   </div>
 </template>

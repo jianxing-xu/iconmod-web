@@ -1,9 +1,12 @@
 import { createVNode, render } from 'vue'
 import { toggleBag } from '../store'
+import { projects } from '../store/project'
 
 const Menu = defineComponent({
-  props: { icon: { type: String }, x: { type: Number }, y: { type: Number } },
+  props: { icon: { type: String }, x: { type: Number }, y: { type: Number }, opts: { type: Object } },
   setup(props, { emit }) {
+    const project = computed(() => projects.value.find(it => it.id === props.opts?.id))
+
     function close() {
       emit('close')
     }
@@ -15,6 +18,7 @@ const Menu = defineComponent({
       document.removeEventListener('click', close)
     })
     return {
+      project,
       onAddToBag() {
         toggleBag(props.icon as string)
         emit('close')
@@ -24,19 +28,20 @@ const Menu = defineComponent({
   render() {
     return h('div', {
       style: { top: `${this.$props.y}px`, left: `${this.$props.x}px` },
-      class: 'fixed overflow-hidden rd-1 border-base bg-base shadow',
+      class: 'fixed overflow-hidden rd-1 border dark:border dark:border-dark-300 bg-white dark:bg-dark-100',
     }, [
       h('div', {
         class: 'px2 py1 border-b border-base text-3 icon-button cursor-pointer',
         onClick: this.onAddToBag,
-      }, 'Add to Bag'),
+      }, 'Toggle to Bag'),
     ])
   },
 })
 
-function showMenu(icon: string, x: number, y: number, onClose?: () => void) {
+interface MenuOpts { bag: boolean, projectId?: number }
+function showMenu(icon: string, x: number, y: number, onClose?: () => void, opts?: MenuOpts) {
   const box = document.createElement('div')
-  const vnode = createVNode(Menu, { icon, x, y, onClose })
+  const vnode = createVNode(Menu, { icon, x, y, onClose, opts })
   render(vnode, box)
   document.body.appendChild(box)
   return () => {
@@ -45,12 +50,13 @@ function showMenu(icon: string, x: number, y: number, onClose?: () => void) {
   }
 }
 
-export function useRightClickIcon() {
+export function useRightClickIcon(opts?: MenuOpts) {
   function onContextMenu(iconName: string, e: MouseEvent) {
+    opts = Object.assign({ bag: true }, opts || {})
     e.preventDefault()
     const close = showMenu(iconName, e.x, e.y, () => {
       close()
-    })
+    }, opts)
   }
   return { onContextMenu }
 }

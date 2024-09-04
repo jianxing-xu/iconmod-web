@@ -1,5 +1,6 @@
 <script setup lang='ts'>
 import { bags, clearBag } from '../store'
+import { showAddToProject } from '../store/project'
 import { PackIconFont, PackSVGSprite, PackZip } from '../utils/pack'
 import type { PackType } from '../utils/pack'
 
@@ -92,6 +93,7 @@ async function PackSvgs(type: PackType = 'svg') {
           flex-none border-t border-base py-3 px-6 text-2xl opacity-75
         "
       >
+        <IconButton class="p-1 cursor-pointer hover:text-primary" icon="octicon:project-symlink-16" text="Add to project" :active="true" @click="showAddToProject = true" />
         <IconButton class="p-1 cursor-pointer hover:text-primary" icon="carbon:download" text="Download Zip" :active="true" @click="showPackOption = true" />
         <IconButton class="p-1 cursor-pointer hover:text-primary" icon="carbon:function" text="Generate Icon Fonts" :active="true" @click="packIconFont" />
         <IconButton class="p-1 cursor-pointer hover:text-primary" icon="carbon:apps" text="Download SVG Sprite" :active="true" @click="packSVGSprite" />

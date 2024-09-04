@@ -1,10 +1,8 @@
-import { activeMode, toggleBag } from '../store'
+import { activeMode, showGlobalTip, toggleBag } from '../store'
 import { getIconSnippet } from '../utils/icons'
 import { cleanupQuery } from '../utils/query'
 
 export const useIconAction = (function () {
-  const copied = ref(false)
-
   return function () {
     const router = useRouter()
     const route = useRoute()
@@ -30,10 +28,9 @@ export const useIconAction = (function () {
     }
 
     function onCopy(status: boolean) {
-      copied.value = status
-      setTimeout(() => {
-        copied.value = false
-      }, 2000)
+      if (status) {
+        showGlobalTip('Copied!')
+      }
     }
 
     async function onSelect(icon: string) {
@@ -49,6 +46,6 @@ export const useIconAction = (function () {
           break
       }
     }
-    return { onSelect, copied, current, onCopy }
+    return { onSelect, current, onCopy }
   }
 })()

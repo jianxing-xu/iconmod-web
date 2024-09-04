@@ -3,7 +3,7 @@ import { getOwnProejcts } from './project'
 
 export const showLoginDialog = ref(false)
 export const isSignIn = ref(false)
-export const userInfo = useStorage<Partial<{ name: string, email: string, id: number }>>('userInfo', {})
+export const userInfo = useStorage<Partial<{ name: string, email: string, id: number }>>('userInfo', null)
 
 export function showLogin() {
   showLoginDialog.value = true

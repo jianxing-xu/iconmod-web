@@ -8,12 +8,13 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     ActionsMenu: typeof import('./components/ActionsMenu.vue')['default']
+    AddIconToProjectDialog: typeof import('./components/AddIconToProjectDialog.vue')['default']
     Bag: typeof import('./components/Bag.vue')['default']
     CollectionEntries: typeof import('./components/CollectionEntries.vue')['default']
     CollectionEntry: typeof import('./components/CollectionEntry.vue')['default']
     CollectionEntryProject: typeof import('./components/CollectionEntryProject.vue')['default']
     ColorPicker: typeof import('./components/ColorPicker.vue')['default']
-    copy: typeof import('./components/CollectionEntry copy.vue')['default']
+    copy: typeof import('./components/CreateProjectDialog copy.vue')['default']
     CreateProjectDialog: typeof import('./components/CreateProjectDialog.vue')['default']
     CustomSelect: typeof import('./components/CustomSelect.vue')['default']
     DarkSwitcher: typeof import('./components/DarkSwitcher.vue')['default']

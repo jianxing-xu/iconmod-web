@@ -21,7 +21,7 @@ defineEmits(['create'])
       />
       <div
         v-if="type === 'project' && i === collections.length - 1"
-        flex
+        flex py3
         justify-center items-center flex-col b b-dashed icon-button hfull cursor-pointer
         @click="$emit('create')"
       >
