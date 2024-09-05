@@ -8,3 +8,7 @@
 2. upload icons to project
 3. word in project online and offline
 4. work in production by offline
+
+# TODOSSSS
+
+1. submit icon
