@@ -1,5 +1,5 @@
 import { createVNode, render } from 'vue'
-import { toggleBag } from '../store'
+import { showGlobalTip, toggleBag } from '../store'
 import { projects } from '../store/project'
 
 const Menu = defineComponent({
@@ -23,6 +23,10 @@ const Menu = defineComponent({
         toggleBag(props.icon as string)
         emit('close')
       },
+      onCopy() {
+        navigator.clipboard.writeText(props.icon as string)
+        showGlobalTip('Copied')
+      },
     }
   },
   render() {
@@ -34,6 +38,10 @@ const Menu = defineComponent({
         class: 'px2 py1 border-b border-base text-3 icon-button cursor-pointer',
         onClick: this.onAddToBag,
       }, 'Toggle to Bag'),
+      h('div', {
+        class: 'px2 py1 border-b border-base text-3 icon-button cursor-pointer',
+        onClick: this.onCopy,
+      }, 'Copy icon name'),
     ])
   },
 })
@@ -51,10 +59,12 @@ function showMenu(icon: string, x: number, y: number, onClose?: () => void, opts
 }
 
 export function useRightClickIcon(opts?: MenuOpts) {
+  let close: any
   function onContextMenu(iconName: string, e: MouseEvent) {
+    close?.()
     opts = Object.assign({ bag: true }, opts || {})
     e.preventDefault()
-    const close = showMenu(iconName, e.x, e.y, () => {
+    close = showMenu(iconName, e.x, e.y, () => {
       close()
     }, opts)
   }

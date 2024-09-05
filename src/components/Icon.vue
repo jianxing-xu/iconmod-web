@@ -45,8 +45,6 @@ const props = defineProps({
   },
 })
 
-const { onContextMenu } = useRightClickIcon()
-
 const el = ref<HTMLDivElement>()
 let node: HTMLElement | undefined
 
@@ -67,7 +65,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div ref="el" class="icon-container" :class="[props.class, props.outerClass]" @contextmenu="e => onContextMenu(props.icon, e)" />
+  <div ref="el" class="icon-container" :class="[props.class, props.outerClass]" />
 </template>
 
 <style>

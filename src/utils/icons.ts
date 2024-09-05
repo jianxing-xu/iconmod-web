@@ -5,9 +5,15 @@ import Base64 from './base64'
 import { HtmlToJSX } from './htmlToJsx'
 import { prettierCode } from './prettier'
 import { svgToPngDataUrl } from './svgToPng'
+import { mfetch } from './http'
 
 // const API_ENTRY = 'https://api.iconify.design'
 const API_ENTRY = 'http://localhost:3030'
+
+export async function clearSvg(svgStr: string, dropColor: boolean) {
+  const res = await mfetch('/api/clearSVG', { method: 'POST', body: JSON.stringify({ content: svgStr, dropColor }) })
+  return res.json().then(r => r.data)
+}
 
 export async function getSvgLocal(icon: string, size = '1em', color = 'currentColor') {
   const data = await loadIcon(icon)
@@ -272,4 +278,58 @@ export async function getIconSnippet(icon: string, type: string, snippet = true,
 
 export function getIconDownloadLink(icon: string) {
   return `${API_ENTRY}/${icon}.svg?download=true&inline=false&height=auto`
+}
+
+export function parseSVG(svgString: string) {
+  const result = {
+    viewBox: [0, 0, 0, 0],
+    width: '',
+    height: '',
+    color: '',
+    body: '',
+  }
+
+  // 解析 viewBox 属性
+  const viewBoxMatch = svgString.match(/viewBox="([^"]+)"/)
+  if (viewBoxMatch) {
+    result.viewBox = viewBoxMatch[1].split(' ').map(Number)
+  }
+
+  // 解析 width 属性
+  const widthMatch = svgString.match(/width="([^"]+)"/)
+  if (widthMatch) {
+    result.width = widthMatch[1]
+  }
+
+  // 解析 height 属性
+  const heightMatch = svgString.match(/height="([^"]+)"/)
+  if (heightMatch) {
+    result.height = heightMatch[1]
+  }
+
+  // 解析 color 属性
+  const colorMatch = svgString.match(/color="([^"]+)"/)
+  if (colorMatch) {
+    result.color = colorMatch[1]
+  }
+
+  // 解析 body 内容
+  const bodyMatch = svgString.match(/<svg[^>]*>([\s\S]*)<\/svg>/)
+  if (bodyMatch) {
+    result.body = bodyMatch[1].trim()
+  }
+
+  // 解析其他属性
+  const attributeRegex = /(\w+)="([^"]+)"/g
+  let match: any
+  // eslint-disable-next-line no-cond-assign
+  while ((match = attributeRegex.exec(svgString)) !== null) {
+    if (!['viewBox', 'width', 'height', 'color'].includes(match[1])) {
+      // eslint-disable-next-line ts/ban-ts-comment
+      // @ts-expect-error
+      result[match[1]] = match[2]
+    }
+  }
+
+  return result
 }

@@ -100,14 +100,13 @@ initData()
             <!-- Right -->
             <div v-if="project" class="flex flex-col">
               <ActionsMenu :collection="{ ...project, id: project.prefix }">
-                <div>
+                <div title="Project member manage">
                   <iconify-icon icon="tdesign:member" class="icon-button" @click="showMemberManage = true" />
                 </div>
-                <div>
+                <div title="Multiple select mode">
                   <iconify-icon
                     icon="ci:select-multiple" class="icon-button"
                     :class="{ 'text-primary': isMultiple }"
-                    title="batch select action"
                     @click="isMultiple = !isMultiple, !isMultiple && multipleSelected.clear(), isMultiple && showGlobalTip('Multiple select actioin mode')"
                   />
                 </div>
@@ -129,6 +128,7 @@ initData()
               :namespace="`${id}:`"
               :class="iconSize"
               :display="listType"
+              :search="search"
               @select="onSelectIcon"
             />
             <button v-if="icons.length > max" class="btn mx-1 my-3" @click="loadMore">

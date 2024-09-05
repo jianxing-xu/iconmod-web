@@ -4,7 +4,7 @@ import { categories, categorySearch, favoritedCollections, filteredCollections, 
 import { useIconAction } from '../hooks'
 import { useIconApiSearch } from '../hooks/useIconApiSearch'
 import { bags, iconSize, listType } from '../store'
-import { projects, showCreateProject } from '../store/project'
+import { getOwnProejcts, projects, showCreateProject } from '../store/project'
 
 const searchbar = ref<{ input: HTMLElement }>()
 
@@ -63,7 +63,10 @@ onKeyStroke('/', (e) => {
   e.preventDefault()
   router.replace('/collection/all')
 })
-onMounted(() => searchbar.value?.input.focus())
+onMounted(() => {
+  searchbar.value?.input.focus()
+  getOwnProejcts()
+})
 </script>
 
 <template>

@@ -39,6 +39,7 @@ declare module 'vue' {
     RouterView: typeof import('vue-router')['RouterView']
     SearchBar: typeof import('./components/SearchBar.vue')['default']
     SettingsCollectionsList: typeof import('./components/SettingsCollectionsList.vue')['default']
+    UploadIconsDialog: typeof import('./components/UploadIconsDialog.vue')['default']
     WithNavbar: typeof import('./components/WithNavbar.vue')['default']
   }
 }

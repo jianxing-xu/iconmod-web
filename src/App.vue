@@ -4,9 +4,10 @@ import { specialTabs } from './data'
 import { useThemeColor } from './hooks'
 import { useIconAction } from './hooks/icon_action'
 import { activeMode, bags, showHelp, useCurrentCollection } from './store'
-import { showAddToProject, showCreateProject } from './store/project'
+import { showAddToProject, showCreateProject, showUploadIcon } from './store/project'
 import { initUser } from './store/user'
 import { globaTip } from './store/global'
+import UploadIconsDialog from './components/UploadIconsDialog.vue'
 
 const { style } = useThemeColor()
 const { onSelect, current, onCopy } = useIconAction()
@@ -68,6 +69,10 @@ initUser()
     <!-- AddBagIconsToProject -->
     <ModalDialog :value="showAddToProject" @close="showAddToProject = false">
       <AddIconToProjectDialog @close="showAddToProject = false" />
+    </ModalDialog>
+    <!-- AddBagIconsToProject -->
+    <ModalDialog :value="showUploadIcon" @close="showUploadIcon = false">
+      <UploadIconsDialog @close="showUploadIcon = false" />
     </ModalDialog>
 
     <!-- Bag Fab -->

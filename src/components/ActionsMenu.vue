@@ -128,8 +128,8 @@ const favorited = computed(() => isFavoritedCollection(props.collection.id))
       @click="toggleFavoriteCollection(collection.id)"
     />
     <!-- Menu -->
-    <div icon-button cursor-pointer relative icon="carbon:menu" title="Menu">
-      三
+    <div icon-button cursor-pointer relative title="Menu">
+      <iconify-icon icon="carbon:menu" />
       <select
         v-model="menu"
         absolute w-full dark:bg-dark-100 text-base top-0 right-0 opacity-0 z-10

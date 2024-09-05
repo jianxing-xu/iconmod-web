@@ -2,6 +2,7 @@
 import type { PropType } from 'vue'
 import { Tooltip } from 'floating-vue'
 import { getSearchHighlightHTML, useThemeColor } from '../hooks'
+import { useRightClickIcon } from '../utils/useClickRightIcon'
 
 defineProps({
   icons: {
@@ -45,6 +46,8 @@ defineEmits<{
   (event: 'select', id: string): void
 }>()
 
+const { onContextMenu } = useRightClickIcon()
+
 const { style } = useThemeColor()
 </script>
 
@@ -54,6 +57,7 @@ const { style } = useThemeColor()
       v-for="icon of icons " :key="icon" class="non-dragging icons-item relative"
       :class="[spacing, selected.includes(namespace + icon) ? 'active' : '', { checked: checked.has(namespace + icon) }]"
       @click="$emit('select', namespace + icon)"
+      @contextmenu="e => onContextMenu(`${namespace}${icon}`, e)"
     >
       <div v-if="display === 'list'" class="icon-border flex gap-1">
         <Icon
