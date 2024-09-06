@@ -7,22 +7,22 @@ const RECENT_ICONS_CAPACITY = 100
 
 export type ActiveMode = 'normal' | 'select' | 'copy'
 
-export const themeColor = useStorage('icones-theme-color', '#329672')
-export const iconSize = useStorage('icones-icon-size', '2xl')
-export const previewColor = useStorage('icones-preview-color', '#888888')
-export const copyPreviewColor = useStorage('icones-copy-preview-color', false)
-export const listType = useStorage('icones-list-type', 'grid')
-export const favoritedCollectionIds = useStorage<string[]>('icones-fav-collections', [])
-export const recentCollectionIds = useStorage<string[]>('icones-recent-collections', [])
-export const recentIconIds = useStorage<string[]>('icones-recent-icons', [])
-export const bags = useStorage<string[]>('icones-bags', [])
+export const themeColor = useStorage('iconmod-theme-color', '#329672')
+export const iconSize = useStorage('iconmod-icon-size', '2xl')
+export const previewColor = useStorage('iconmod-preview-color', '#888888')
+export const copyPreviewColor = useStorage('iconmod-copy-preview-color', false)
+export const listType = useStorage('iconmod-list-type', 'grid')
+export const favoritedCollectionIds = useStorage<string[]>('iconmod-fav-collections', [])
+export const recentCollectionIds = useStorage<string[]>('iconmod-recent-collections', [])
+export const recentIconIds = useStorage<string[]>('iconmod-recent-icons', [])
+export const bags = useStorage<string[]>('iconmod-bags', [])
 export const activeMode = useStorage<ActiveMode>('active-mode', 'normal')
-export const preferredCase = useStorage<IdCase>('icones-preferfed-case', 'iconify')
-export const drawerCollapsed = useStorage<boolean>('icones-drawer-collapsed', false)
-export const selectedPackageManager = useStorage<string>('icones-package-manager', 'pnpm')
+export const preferredCase = useStorage<IdCase>('iconmod-preferfed-case', 'iconify')
+export const drawerCollapsed = useStorage<boolean>('iconmod-drawer-collapsed', false)
+export const selectedPackageManager = useStorage<string>('iconmod-package-manager', 'pnpm')
 
-export const excludedCollectionIds = useStorage<string[]>('icones-excluded-collections', [])
-export const excludedCategories = useStorage<string[]>('icones-excluded-categories', [
+export const excludedCollectionIds = useStorage<string[]>('iconmod-excluded-collections', [])
+export const excludedCategories = useStorage<string[]>('iconmod-excluded-categories', [
 ])
 
 export function getTransformedId(icon: string) {

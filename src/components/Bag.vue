@@ -35,7 +35,7 @@ async function packSVGSprite() {
 async function PackSvgs(type: PackType = 'svg') {
   await PackZip(
     bags.value,
-    'icones-bags',
+    'iconmod-bags',
     type,
   )
 }

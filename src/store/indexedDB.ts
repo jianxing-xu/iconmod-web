@@ -1,7 +1,7 @@
 import type { Table } from 'dexie'
 import Dexie from 'dexie'
 
-const db = new Dexie('icones')
+const db = new Dexie('iconmod')
 
 db.version(1).stores({
   collections: 'id, data',

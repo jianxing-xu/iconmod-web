@@ -1,3 +1,3 @@
 export const isDark = useDark({
-  storageKey: 'icones-schema',
+  storageKey: 'iconmod-schema',
 })
