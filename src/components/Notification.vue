@@ -7,7 +7,7 @@ withDefaults(
 
 <template>
   <div
-    class="fixed top-0 left-0 right-0 z-50 text-center"
+    class="fixed top-0 left-0 right-0 z-50 text-center z-99"
     :class="value ? '' : 'pointer-events-none overflow-hidden'"
   >
     <div

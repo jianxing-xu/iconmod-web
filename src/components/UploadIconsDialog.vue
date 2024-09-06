@@ -1,76 +1,116 @@
 <script setup lang="ts">
-import { buildParsedSVG, convertParsedSVG, iconToHTML, parseSVGContent } from '@iconify/utils'
+import { buildParsedSVG, iconToHTML, parseSVGContent } from '@iconify/utils'
 import { Tooltip } from 'floating-vue'
-import { bags, showGlobalTip } from '../store'
-import { projects, showAddToProject } from '../store/project'
+import { showGlobalTip } from '../store'
+import { getOwnProejcts, projects, showUploadIcon } from '../store/project'
 import { mfetch } from '../utils/http'
-import { clearSvg } from '../utils/icons'
-import { LoadIconSvgs } from '../utils/pack'
+import { REMOVE_ICON_CHAT, REMOVE_ICON_PRE, adjustIconname, clearSvgs, convertSvgShapesToPath } from '../utils/icons'
 import { useDragTarget } from '../utils/useDragTarget'
 import { useThemeColor } from '../hooks'
+import { KEYS } from '../utils/bus'
 
 defineEmits(['close'])
-
 let incrementID = 0
 
+const route = useRoute()
 const { style } = useThemeColor()
+const { emit } = useEventBus(KEYS.REFRESH_PROJECT_ICONS)
 
 const submitting = ref(false)
 const selected = ref<number | null>()
+
 const uploadTip = ref('')
+const iconsTip = ref('')
 
 const dragTarget = ref()
 const dragOver = ref(false)
 const dropColor = ref(true)
 
 const icons = ref<{ id: number, name: string, svg: string }[]>([])
+const repeatNames = ref<Record<string, 1>>({})
 
-useDragTarget(dragTarget, (e) => {
-  const file = e.dataTransfer?.files[0]
-  if (!file)
-    return
-  if (file.type !== 'image/svg+xml') {
-    uploadTip.value = 'must be svg file'
-    return
-  }
-  processSVG(file)
-  setTimeout(() => dragOver.value = false)
+const canSubmit = computed(() => {
+  return !submitting.value && selected.value && Object.keys(repeatNames.value).length === 0 && icons.value.length
 })
 
 async function onSubmit() {
-  if (submitting.value || !selected.value)
+  if (!canSubmit.value)
     return
   submitting.value = true
   try {
-    let icons = await LoadIconSvgs(bags.value)
-    icons = icons.map(it => ({ ...it, name: it.name.split(':')[1] }))
-    await mfetch('/api/project/addicons', { method: 'POST', body: JSON.stringify({ projectId: selected.value, icons }) })
+    const res = await mfetch('/api/project/upload', { method: 'POST', body: JSON.stringify({ projectId: selected.value, icons: icons.value }) }).then(r => r.json())
+    if (res?.data?.hasSame) {
+      repeatNames.value = res.data?.names
+      iconsTip.value = 'Already has same name icon in project, please check'
+      return
+    }
     showGlobalTip('Add Successful!')
-    showAddToProject.value = false
+    getOwnProejcts()
+    if (route.name === 'project-id') {
+      // refresh project icon
+      emit()
+    }
+    showUploadIcon.value = false
+    icons.value = []
   }
   // eslint-disable-next-line unused-imports/no-unused-vars
   catch (_) {
 
   }
-}
-async function onFilechange(e: Event) {
-  const file = (e.target as HTMLInputElement).files?.[0]
-  if (!file)
-    return
-  if (file.type !== 'image/svg+xml') {
-    uploadTip.value = 'must be svg file'
+  finally {
+    submitting.value = false
   }
-  processSVG(file)
 }
-async function processSVG(file: File) {
+useDragTarget(dragTarget, (e) => {
+  const files = e.dataTransfer?.files
+  onFilechange(files)
+  setTimeout(() => dragOver.value = false)
+})
+
+async function onFilechange(files: FileList | null | undefined) {
+  const finalFiles = []
+  for (let index = 0; index < (files?.length || 0); index++) {
+    const f = files?.item(index)
+    if (f?.type !== 'image/svg+xml')
+      continue
+    finalFiles.push(f)
+  }
+  if (finalFiles.length === 0) {
+    uploadTip.value = 'All files not svg'
+  }
+  else {
+    showGlobalTip('Auto filter not the svg file.')
+  }
+  processSVG(finalFiles)
+}
+async function processSVG(files: File[]) {
   try {
     uploadTip.value = ''
-    const svg = await clearSvg(await file.text(), dropColor.value)
-    const name = file.name
-    icons.value.push({ name: name.replace('.svg', ''), id: ++incrementID, svg })
+    try {
+      const texts = await Promise.all(files.map(it => it.text()))
+      const svgs = files.map((it, i) => ({
+        id: ++incrementID,
+        name: it.name.replace('.svg', ''),
+        svg: texts[i],
+      }))
+      // clean svg remove some useless attrs,style,tags
+      const [cleanedSvgs, errs] = await clearSvgs(svgs, dropColor.value)
+      // convert soem shape to path
+      const convertSvgs = cleanedSvgs.map((it: any) => ({ ...it, svg: convertSvgShapesToPath(it.svg) }))
+      icons.value.push(...convertSvgs)
+      if (!convertSvgs?.length) {
+        uploadTip.value = `Parse svg error ${errs.map((e: any) => e?.message || JSON.stringify(e || '')).join(',')}`
+      }
+    }
+    catch (error: any) {
+      uploadTip.value = `Parse svg error ${error?.message || JSON.stringify(error || '')}`
+    }
   }
   catch (error: any) {
     showGlobalTip(`Parse icon error${error?.toString()}`)
+  }
+  finally {
+    onCheckName()
   }
 }
 function buildSvg(svg: string) {
@@ -79,12 +119,43 @@ function buildSvg(svg: string) {
     return 'icon convert failed'
   }
   const { body, ...attrs } = icon
-  return iconToHTML(icon.body, { ...(attrs.attributes), width: '40', height: '40' })
+  return iconToHTML(icon.body, { ...(attrs.attributes), width: '1em', height: '1em' })
 }
+
+// check
+function onCheckName() {
+  const m: Record<string, 1> = {}
+  const _set = new Set()
+  icons.value.forEach((ic) => {
+    if (_set.has(ic.name)) {
+      m[ic.name] = 1
+    }
+    else {
+      _set.add(ic.name)
+    }
+  })
+  repeatNames.value = m
+  if (Object.keys(m).length) {
+    iconsTip.value = 'If there is an icon of the same name, please modify'
+  }
+  else {
+    iconsTip.value = ''
+  }
+}
+function adjustName(name: string, i: number) {
+  const cleaned = adjustIconname(name)
+  icons.value[i].name = cleaned
+}
+
+watch([() => projects.value.length, showUploadIcon], ([v, s]) => {
+  if (v > 0 && s) {
+    selected.value = projects.value[0].id
+  }
+})
 </script>
 
 <template>
-  <form class="w-700px" @submit.prevent.stop="onSubmit">
+  <form class="w-760px" @submit.prevent.stop="onSubmit">
     <div class="flex p4">
       <div font-bold>
         Upload icons
@@ -109,20 +180,26 @@ function buildSvg(svg: string) {
       </div>
       <div h20 wfull rd-1 b border-dashed border-white flex relative :class="{ 'border-2': dragOver }">
         <iconify-icon icon="mdi:add" ma text-6 />
-        <input ref="dragTarget" type="file" wfull hfull absolute top-0 left-0 opacity-0 @change="onFilechange" @dragenter="dragOver = true" @dragleave="dragOver = false">
+        <input ref="dragTarget" type="file" multiple max="10" wfull hfull absolute top-0 left-0 opacity-0 @change="e => onFilechange((e.target as HTMLInputElement).files)" @dragenter="dragOver = true" @dragleave="dragOver = false">
       </div>
       <div text-red>
         {{ uploadTip }}
       </div>
     </div>
     <div class="p4 pt0">
-      <div>Icons</div>
-      <div flex gap3 flex-wrap>
-        <div v-for="icon of icons" :key="icon.id" flex items-center bg-base-2 rd-1 pl2>
-          <div v-html="buildSvg(icon.svg)" />
-          <input v-model="icon.name" bg-base-2 rd-1 w-20 hfull px2 ml2>
-          <iconify-icon icon="mdi:trash" text-8 cursor-pointer icon-button />
+      <div>Icons*</div>
+      <div flex gap2 flex-wrap max-h-50vh overflow-auto>
+        <div v-for="(icon, i) of icons" :key="icon.id" flex flex-col items-center bg-base-2 rd-1 relative class="icon-item">
+          <div p2 text-20 border-box v-html="buildSvg(icon.svg)" />
+          <input
+            v-model="icon.name" bg-base-2 py1 px2 w-24 outline-none b :class="{ 'border-red': !!repeatNames[icon.name] }"
+            max="10" oninput="value=value?.replace(/[^a-z-]/g, '')" @blur="onCheckName" @blur.stop="adjustName(icon.name, i)"
+          >
+          <iconify-icon class="trash" icon="mdi:trash" hidden text-8 cursor-pointer icon-button absolute top-0 right-0 z-999 @click="icons.splice(i, 1)" />
         </div>
+      </div>
+      <div text-red>
+        {{ iconsTip }}
       </div>
     </div>
     <div class="p4 pt0">
@@ -138,7 +215,7 @@ function buildSvg(svg: string) {
         <div>{{ p.name }}</div>
       </div>
       <div class="mt4">
-        <button b border-base bg-base py2 px4 rd-1 flex items-center>
+        <button b bg-base py2 px4 rd-1 flex items-center :class="{ 'opacity-50': !canSubmit }">
           Confirm
           <iconify-icon v-show="submitting" icon="svg-spinners:270-ring-with-bg" class="ml-1" />
         </button>
@@ -150,5 +227,8 @@ function buildSvg(svg: string) {
 <style>
 .search-user-parent:has(#searchUser:focus) {
   outline: white 1px solid;
+}
+.icon-item:hover .trash {
+  display: block;
 }
 </style>

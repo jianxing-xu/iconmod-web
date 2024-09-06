@@ -10,9 +10,9 @@ import { mfetch } from './http'
 // const API_ENTRY = 'https://api.iconify.design'
 const API_ENTRY = 'http://localhost:3030'
 
-export async function clearSvg(svgStr: string, dropColor: boolean) {
-  const res = await mfetch('/api/clearSVG', { method: 'POST', body: JSON.stringify({ content: svgStr, dropColor }) })
-  return res.json().then(r => r.data)
+export async function clearSvgs(svgs: any[], dropColor: boolean) {
+  const res = await mfetch('/api/clearSVGs', { method: 'POST', body: JSON.stringify({ svgs, dropColor }) })
+  return res.json().then(r => [r.data, r.errors])
 }
 
 export async function getSvgLocal(icon: string, size = '1em', color = 'currentColor') {
@@ -155,7 +155,7 @@ export function SvgToReactNative(svg: string, name: string, snippet: boolean) {
   }
 
   function generateImports(usedComponents: string[]): string {
-  // Separate Svg from the other components
+    // Separate Svg from the other components
     const svgIndex = usedComponents.indexOf('Svg')
     if (svgIndex !== -1)
       usedComponents.splice(svgIndex, 1)
@@ -332,4 +332,233 @@ export function parseSVG(svgString: string) {
   }
 
   return result
+}
+
+export function convertSvgShapesToPath(svgString: string) {
+  // 使用DOMParser将SVG字符串转换为DOM对象
+  const parser = new DOMParser()
+  const svgDoc = parser.parseFromString(svgString, 'image/svg+xml')
+  const svgElement = svgDoc.documentElement
+
+  // 获取所有形状元素
+  const shapes = svgElement.querySelectorAll('rect, ellipse, line, polyline, polygon')
+
+  shapes.forEach((shape) => {
+    const pathData = shape2path(shape)
+
+    if (typeof pathData === 'undefined') {
+      throw new TypeError('convert error')
+    }
+
+    // 创建一个新的path元素
+    const pathElement = document.createElementNS('http://www.w3.org/2000/svg', 'path')
+    pathElement.setAttribute('d', pathData)
+
+    // 复制原始形状的所有属性到新的path元素
+    for (let i = 0; i < shape.attributes.length; i++) {
+      const attr = shape.attributes[i]
+      if (attr.name !== 'd') {
+        pathElement.setAttribute(attr.name, attr.value)
+      }
+    }
+
+    // 替换原始形状为新的path元素
+    shape.parentNode?.replaceChild(pathElement, shape)
+  })
+
+  // 将修改后的SVG DOM对象转换回字符串
+  const serializer = new XMLSerializer()
+  return serializer.serializeToString(svgDoc)
+}
+export function shape2path(node: Element) {
+  // 匹配路径中数值的正则
+  const regNumber = /[-+]?(?:\d*\.\d+|\d+\.?)(?:e[-+]?\d+)?/gi
+
+  if (!node?.tagName)
+    return ''
+  const tagName = String(node.tagName).toLowerCase()
+
+  let path = ''
+
+  switch (tagName) {
+    case 'path':
+    {
+      path = node.getAttribute('d') as string
+      break
+    }
+    case 'rect':
+    {
+      const x = Number(node.getAttribute('x'))
+      const y = Number(node.getAttribute('y'))
+      const width = Number(node.getAttribute('width'))
+      const height = Number(node.getAttribute('height'))
+      /*
+                       * rx 和 ry 的规则是：
+                       * 1. 如果其中一个设置为 0 则圆角不生效
+                       * 2. 如果有一个没有设置则取值为另一个
+                       * 3.rx 的最大值为 width 的一半, ry 的最大值为 height 的一半
+                       */
+      let rx = Number(node.getAttribute('rx')) || Number(node.getAttribute('ry')) || 0
+      let ry = Number(node.getAttribute('ry')) || Number(node.getAttribute('rx')) || 0
+
+      // 非数值单位计算，如当宽度像100%则移除
+      // if (isNaN(x - y + width - height + rx - ry)) return;
+
+      rx = rx > width / 2 ? width / 2 : rx
+      ry = ry > height / 2 ? height / 2 : ry
+
+      // 如果其中一个设置为 0 则圆角不生效
+      if (rx === 0 || ry === 0) {
+        // const path =
+        //     'M' + x + ' ' + y +
+        //     'H' + (x + width) +
+        //     'V' + (y + height) +
+        //     'H' + x +
+        //     'z';
+        path
+            = `M${x} ${y}h${width}v${height}h${-width}z`
+      }
+      else {
+        path = ''
+        // path
+        //   = `M${
+        //     x
+        //   } ${
+        //     y + ry
+        //   }a${
+        //     rx
+        //   } ${
+        //     ry
+        //   } 0 0 1 ${
+        //     rx
+        //   } ${
+        //     -ry
+        //   }h${
+        //     width - rx - rx
+        //   }a${
+        //     rx
+        //   } ${
+        //     ry
+        //   } 0 0 1 ${
+        //     rx
+        //   } ${
+        //     ry
+        //   }v${
+        //     height - ry - ry
+        //   }a${
+        //     rx
+        //   } ${
+        //     ry
+        //   } 0 0 1 ${
+        //     -rx
+        //   } ${
+        //     ry
+        //   }h${
+        //     rx + rx - width
+        //   }a${
+        //     rx
+        //   } ${
+        //     ry
+        //   } 0 0 1 ${
+        //     -rx
+        //   } ${
+        //     -ry
+        //   }z`
+      }
+
+      break
+    }
+
+    case 'circle':
+    {
+      const cx = Number(node.getAttribute('cx')) || 0
+      const cy = Number(node.getAttribute('cy')) || 0
+      const r = Number(node.getAttribute('r')) || 0
+      path
+          = `M${cx - r
+        } ${cy
+        }a${r
+        } ${r
+        } 0 1 0 ${2 * r
+        } 0`
+        + `a${r
+        } ${r
+        } 0 1 0 ${-2 * r
+        } 0`
+        + `z`
+
+      break
+    }
+
+    case 'ellipse':
+    {
+      const cx = Number(node.getAttribute('cx') || 0) * 1
+      const cy = Number(node.getAttribute('cy') || 0) * 1
+      const rx = Number(node.getAttribute('rx') || 0) * 1
+      const ry = Number(node.getAttribute('ry') || 0) * 1
+
+      if (Number.isNaN(cx - cy + rx - ry))
+        return
+      path
+          = `M${cx - rx
+        } ${cy
+        }a${rx
+        } ${ry
+        } 0 1 0 ${2 * rx
+        } 0`
+        + `a${rx
+        } ${ry
+        } 0 1 0 ${-2 * rx
+        } 0`
+        + `z`
+
+      break
+    }
+
+    case 'line':
+    {
+      const x1 = Number(node.getAttribute('x1') || 0)
+      const y1 = Number(node.getAttribute('y1') || 0)
+      const x2 = Number(node.getAttribute('x2') || 0)
+      const y2 = Number(node.getAttribute('y2') || 0)
+      if (Number.isNaN(x1 - y1 + (x2 - y2))) {
+        return
+      }
+
+      path = `M${x1} ${y1}L${x2} ${y2}`
+
+      break
+    }
+
+    case 'polygon':
+    case 'polyline':
+    // ploygon与polyline是一样的,polygon多边形，polyline折线
+    {
+      const points = (node?.getAttribute('points')?.match(regNumber) || []).map(Number)
+      if (points.length < 4) {
+        return
+      }
+      path
+          = `M${points.slice(0, 2).join(' ')
+        }L${points.slice(2).join(' ')
+        }${tagName === 'polygon' ? 'z' : ''}`
+
+      break
+    }
+  }
+  return path || ''
+}
+
+export const REMOVE_ICON_PRE = /^[^a-z0-9]+(?=[a-z0-9-])/
+export const REMOVE_ICON_SUFIX = /[^a-z0-9]+$/
+export const REMOVE_ICON_CHAT = `this.value=this.value.replace(/[^a-z-]/g, '').replace(${REMOVE_ICON_PRE}, '').replace(${REMOVE_ICON_SUFIX}, '')`
+export function adjustIconname(input: string) {
+  let cleaned = input.replace(/[^a-z-]/g, '')
+  // remove prefix illigel chat
+  cleaned = cleaned.replace(REMOVE_ICON_PRE, '')
+
+  // remove suffix iglligel chat
+  cleaned = cleaned.replace(REMOVE_ICON_SUFIX, '')
+
+  return cleaned
 }

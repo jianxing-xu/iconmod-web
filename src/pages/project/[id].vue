@@ -2,6 +2,7 @@
 import ActionsMenu from '../../components/ActionsMenu.vue'
 import { useIconAction } from '../../hooks'
 import { bags, iconSize, listType, showGlobalTip } from '../../store'
+import { KEYS } from '../../utils/bus'
 import { mfetch } from '../../utils/http'
 
 const props = defineProps<{
@@ -10,6 +11,7 @@ const props = defineProps<{
 
 const max = 100
 const { onSelect } = useIconAction()
+const { on, off } = useEventBus(KEYS.REFRESH_PROJECT_ICONS)
 
 const project = ref<{ name: string, id: string, icons: string[], prefix: string }>()
 const search = ref('')
@@ -66,6 +68,11 @@ function initData() {
   }).catch(() => {})
 }
 initData()
+
+onMounted(() => {
+  off(initData)
+  on(initData)
+})
 </script>
 
 <template>

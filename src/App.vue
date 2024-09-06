@@ -38,6 +38,7 @@ initUser()
     <!-- Bag -->
     <Modal :value="showBag" direction="right" @close="showBag = false">
       <Bag
+        v-if="showBag"
         @close="showBag = false"
         @select="onSelect"
       />
@@ -62,17 +63,17 @@ initUser()
     </ModalDialog>
 
     <!-- CreateProject -->
-    <ModalDialog :value="showCreateProject" @close="showCreateProject = false">
-      <CreateProjectDialog @close="showCreateProject = false" />
+    <ModalDialog :value="showCreateProject">
+      <CreateProjectDialog v-if="showCreateProject" @close="showCreateProject = false" />
     </ModalDialog>
 
     <!-- AddBagIconsToProject -->
     <ModalDialog :value="showAddToProject" @close="showAddToProject = false">
-      <AddIconToProjectDialog @close="showAddToProject = false" />
+      <AddIconToProjectDialog v-if="showAddToProject" @close="showAddToProject = false" />
     </ModalDialog>
-    <!-- AddBagIconsToProject -->
-    <ModalDialog :value="showUploadIcon" @close="showUploadIcon = false">
-      <UploadIconsDialog @close="showUploadIcon = false" />
+    <!-- UploadIconToProject -->
+    <ModalDialog :value="showUploadIcon">
+      <UploadIconsDialog v-if="showUploadIcon" @close="showUploadIcon = false" />
     </ModalDialog>
 
     <!-- Bag Fab -->
