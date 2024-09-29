@@ -11,7 +11,7 @@ import { basePath } from './env'
 import routes from '~pages'
 
 addAPIProvider('', {
-  resources: ['http://localhost:3030'],
+  resources: [import.meta.env.VITE_ICON_PROVIDER],
 })
 
 const app = createApp(App)

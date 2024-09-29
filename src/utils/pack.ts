@@ -61,6 +61,13 @@ ${symbols}
   const blob = new Blob([svg], { type: 'image/svg+xml' })
   Download(blob, 'sprite.svg')
 }
+export async function RemotePackSVGSprite(projectId: number) {
+  const res = await fetch(`/api/project/packsvgSymbol?projectId=${projectId}`).then(res => res.json())
+  if (res.code !== 200)
+    return ''
+  const blob = new Blob([res.data], { type: 'application/javascript' })
+  Download(blob, 'iconmodSymbols.js')
+}
 
 export async function PackIconFont(icons: string[], options: any = {}) {
   if (!icons.length)

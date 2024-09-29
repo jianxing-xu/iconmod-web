@@ -106,7 +106,7 @@ onMounted(() => {
 
             <!-- Right -->
             <div v-if="project" class="flex flex-col">
-              <ActionsMenu :collection="{ ...project, id: project.prefix }">
+              <ActionsMenu :collection="{ ...project }">
                 <div title="Project member manage">
                   <iconify-icon icon="tdesign:member" class="icon-button" @click="showMemberManage = true" />
                 </div>

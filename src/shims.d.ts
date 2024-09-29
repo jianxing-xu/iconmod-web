@@ -9,6 +9,7 @@ interface Window {
 
 declare const vscode: any
 declare const __BUILD_TIME__: string
+declare const __ICON_PROVIDER__: string
 declare const PWA: boolean
 
 declare module '*.vue' {

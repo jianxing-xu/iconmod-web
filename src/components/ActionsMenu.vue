@@ -2,7 +2,7 @@
 import type { PropType } from 'vue'
 import { activeMode, iconSize, inProgress, isFavoritedCollection, listType, progressMessage, toggleFavoriteCollection } from '../store'
 import type { CollectionMeta } from '../data'
-import { PackIconFont, PackJsonZip, PackSvgZip } from '../utils/pack'
+import { PackIconFont, PackJsonZip, PackSvgZip, RemotePackSVGSprite } from '../utils/pack'
 
 const props = defineProps({
   collection: {
@@ -29,8 +29,8 @@ async function packIconFont() {
   progressMessage.value = 'Packing up...'
   await nextTick()
   await PackIconFont(
-    props.collection.icons.map(i => `${props.collection!.id}:${i}`),
-    { fontName: props.collection.name, fileName: props.collection.id },
+    props.collection.icons.map(i => `${props.collection!.prefix}:${i}`),
+    { fontName: props.collection.name, fileName: props.collection.prefix },
   )
   inProgress.value = false
 }
@@ -45,8 +45,8 @@ async function packSvgs() {
   progressMessage.value = 'Packing up...'
   await nextTick()
   await PackSvgZip(
-    props.collection.icons.map(i => `${props.collection!.id}:${i}`),
-    props.collection.id,
+    props.collection.icons.map(i => `${props.collection!.prefix}:${i}`),
+    props.collection.prefix as string,
   )
   inProgress.value = false
 }
@@ -61,10 +61,16 @@ async function packJson() {
   progressMessage.value = 'Packing up...'
   await nextTick()
   await PackJsonZip(
-    props.collection.icons.map(i => `${props.collection!.id}:${i}`),
-    props.collection.id,
+    props.collection.icons.map(i => `${props.collection!.prefix}:${i}`),
+    props.collection.prefix as string,
   )
   inProgress.value = false
+}
+
+async function packSymbolds() {
+  if (!props.collection)
+    return
+  await RemotePackSVGSprite(Number.parseInt(props.collection.id))
 }
 
 watch(
@@ -98,6 +104,9 @@ watch(
       case 'download_json':
         packJson()
         break
+      case 'download_symbols':
+        packSymbolds()
+        break
     }
 
     await nextTick()
@@ -106,7 +115,7 @@ watch(
   { flush: 'pre' },
 )
 
-const favorited = computed(() => isFavoritedCollection(props.collection.id))
+const favorited = computed(() => isFavoritedCollection(props.collection.prefix as string))
 </script>
 
 <template>
@@ -121,11 +130,11 @@ const favorited = computed(() => isFavoritedCollection(props.collection.id))
     />
 
     <iconify-icon
-      v-if="collection.id !== 'all'"
+      v-if="collection.prefix !== 'all'"
       icon-button
       :icon="favorited ? 'carbon:star-filled' : 'carbon:star'"
       title="Toggle Favorite"
-      @click="toggleFavoriteCollection(collection.id)"
+      @click="toggleFavoriteCollection(collection.prefix as string)"
     />
     <!-- Menu -->
     <div icon-button cursor-pointer relative title="Menu">
@@ -159,7 +168,7 @@ const favorited = computed(() => isFavoritedCollection(props.collection.id))
                   the full set, we should make some UI to aware users
                   in browser version.
           -->
-        <optgroup v-if="collection.id !== 'all'" label="Downloads">
+        <optgroup v-if="collection.prefix !== 'all'" label="Downloads">
           <option value="download_iconfont" :disabled="inProgress">
             Iconfont
           </option>
@@ -168,6 +177,9 @@ const favorited = computed(() => isFavoritedCollection(props.collection.id))
           </option>
           <option value="download_json" :disabled="inProgress">
             JSON
+          </option>
+          <option value="download_symbols" :disabled="inProgress">
+            Svg Symbols
           </option>
         </optgroup>
       </select>
