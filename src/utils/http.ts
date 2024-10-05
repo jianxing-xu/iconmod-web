@@ -19,7 +19,8 @@ export async function mfetch(url: string, opts?: RequestInit) {
     headers,
     credentials: 'include',
   }, opts ?? {})
-  const res = await fetch(url, init)
+  const _url = url?.startsWith('http://') || url?.startsWith('https://') ? url : import.meta.env.VITE_ICON_PROVIDER;
+  const res = await fetch(_url, init)
 
   try {
     await tokenInter(res)
