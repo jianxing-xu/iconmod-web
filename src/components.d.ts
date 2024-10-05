@@ -14,7 +14,6 @@ declare module 'vue' {
     CollectionEntry: typeof import('./components/CollectionEntry.vue')['default']
     CollectionEntryProject: typeof import('./components/CollectionEntryProject.vue')['default']
     ColorPicker: typeof import('./components/ColorPicker.vue')['default']
-    copy: typeof import('./components/CreateProjectDialog copy.vue')['default']
     CreateProjectDialog: typeof import('./components/CreateProjectDialog.vue')['default']
     CustomSelect: typeof import('./components/CustomSelect.vue')['default']
     DarkSwitcher: typeof import('./components/DarkSwitcher.vue')['default']

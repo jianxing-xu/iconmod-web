@@ -10,10 +10,10 @@
     "prebuild": "esno scripts/prebuild.ts",
     "postbuild": "esno scripts/postbuild.ts",
     "lint": "eslint .",
-    "dev": "vite --port 3333 --open",
+    "dev": "vite --port 3333 --open --mode prod",
     "dev-pwa": "SW_DEV=true vite --port 3333",
     "typecheck": "vue-tsc --noEmit",
-    "build": "NODE_ENV=production vite build"
+    "build": "vite build --mode prod"
   },
   "dependencies": {
     "@antfu/utils": "^0.7.10",
