@@ -38,7 +38,7 @@ async function onSubmit() {
     return
   submitting.value = true
   try {
-    const res = await mfetch('/api/project/upload', { method: 'POST', body: JSON.stringify({ projectId: selected.value, icons: icons.value }) }).then(r => r.json())
+    const res = await mfetch('/project/upload', { method: 'POST', body: JSON.stringify({ projectId: selected.value, icons: icons.value }) }).then(r => r.json())
     if (res?.data?.hasSame) {
       repeatNames.value = res.data?.names
       iconsTip.value = 'Already has same name icon in project, please check'

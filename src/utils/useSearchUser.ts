@@ -11,7 +11,7 @@ export function useSearchUser(key?: Ref<string>) {
         userResults.value = []
         return
       }
-      mfetch(`/api/user/search?keyword=${_k}`).then(r => r.json()).then((res) => {
+      mfetch(`/user/search?keyword=${_k}`).then(r => r.json()).then((res) => {
         userResults.value = res.data || []
       }).catch(() => {})
     }, 400)

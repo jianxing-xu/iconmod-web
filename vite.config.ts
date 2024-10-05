@@ -7,7 +7,7 @@ import dayjs from 'dayjs'
 import Vue from '@vitejs/plugin-vue'
 import UnoCSS from 'unocss/vite'
 
-export default defineConfig(() => {
+export default defineConfig(({ mode }) => {
   return {
     server: {
       proxy: {
@@ -54,5 +54,6 @@ export default defineConfig(() => {
         'iconify-icon': resolve(__dirname, 'node_modules/iconify-icon/dist/iconify-icon.mjs'),
       },
     },
+    base: mode === 'prod' ? '/iconmod' : '/',
   }
 })

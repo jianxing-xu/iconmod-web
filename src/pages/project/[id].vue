@@ -44,7 +44,7 @@ function removeIcons() {
   if (removing.value)
     return
   removing.value = true
-  mfetch('/api/project/removeicons', {
+  mfetch('/project/removeicons', {
     method: 'POST',
     body: JSON.stringify({
       projectId: project?.value?.id,
@@ -59,7 +59,7 @@ function removeIcons() {
 }
 
 function initData() {
-  mfetch(`/api/project/info?prefix=${props.id}`).then(r => r.json()).then((res) => {
+  mfetch(`/project/info?prefix=${props.id}`).then(r => r.json()).then((res) => {
     if (res.data) {
       res.data.icons = res.data.uncategorized
       delete res.data.uncategorized

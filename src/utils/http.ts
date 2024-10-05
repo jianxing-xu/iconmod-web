@@ -19,7 +19,7 @@ export async function mfetch(url: string, opts?: RequestInit) {
     headers,
     credentials: 'include',
   }, opts ?? {})
-  const _url = url?.startsWith('http://') || url?.startsWith('https://') ? url : import.meta.env.VITE_ICON_PROVIDER;
+  const _url = url?.startsWith('http://') || url?.startsWith('https://') ? url : import.meta.env.VITE_ICON_PROVIDER + url
   const res = await fetch(_url, init)
 
   try {

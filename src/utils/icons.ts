@@ -11,7 +11,7 @@ import { mfetch } from './http'
 const API_ENTRY = 'http://localhost:3030'
 
 export async function clearSvgs(svgs: any[], dropColor: boolean) {
-  const res = await mfetch('/api/clearSVGs', { method: 'POST', body: JSON.stringify({ svgs, dropColor }) })
+  const res = await mfetch('/clearSVGs', { method: 'POST', body: JSON.stringify({ svgs, dropColor }) })
   return res.json().then(r => [r.data, r.errors])
 }
 

@@ -77,7 +77,7 @@ export function isInstalled(id: string) {
 }
 // install the preview icons on the homepage
 export function preInstall() {
-  mfetch('/api/collections').then(r => r.json()).then((res) => {
+  mfetch('/collections').then(r => r.json()).then((res) => {
     collectionList.value = Object.keys(res).map(it => ({ ...res[it], id: it }))
     fzf = new AsyncFzf(Object.freeze(Object.values(collectionList.value)), {
       casing: 'case-insensitive',
@@ -106,7 +106,7 @@ export async function tryInstallFromLocal(id: string) {
 }
 
 export async function getCollectionMeta(id: string): Promise<CollectionMeta | null> {
-  let meta: CollectionMeta = await mfetch(`/api/collection?prefix=${id}`).then(r => r.json()).catch(() => {})
+  let meta: CollectionMeta = await mfetch(`/collection?prefix=${id}`).then(r => r.json()).catch(() => {})
   if (meta) {
     meta.id = meta?.prefix as string
     const icons = Object.values(meta.categories || {}).reduce((pre, it) => pre.concat(it), [])

@@ -10,7 +10,7 @@
     "prebuild": "esno scripts/prebuild.ts",
     "postbuild": "esno scripts/postbuild.ts",
     "lint": "eslint .",
-    "dev": "vite --port 3333 --open --mode prod",
+    "dev": "vite --port 3333 --open",
     "dev-pwa": "SW_DEV=true vite --port 3333",
     "typecheck": "vue-tsc --noEmit",
     "build": "vite build --mode prod"

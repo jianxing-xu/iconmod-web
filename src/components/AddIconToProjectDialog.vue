@@ -16,7 +16,7 @@ async function onSubmit() {
   try {
     let icons = await LoadIconSvgs(bags.value)
     icons = icons.map(it => ({ ...it, name: it.name.split(':')[1] }))
-    await mfetch('/api/project/addicons', { method: 'POST', body: JSON.stringify({ projectId: selected.value, icons }) })
+    await mfetch('/project/addicons', { method: 'POST', body: JSON.stringify({ projectId: selected.value, icons }) })
     showGlobalTip('Add Successful!')
     showAddToProject.value = false
   }

@@ -12,7 +12,7 @@ const members = ref<{ userId: number, user: { name: string }, role: number }[]>(
 const userResults = ref<{ id: number, name: string, email: string }[]>([])
 
 function getMembers() {
-  mfetch(`/api/project/members?projectId=${props.projectId}`).then(r => r.json()).then((res) => {
+  mfetch(`/project/members?projectId=${props.projectId}`).then(r => r.json()).then((res) => {
     members.value = (res.data || [])
   }).catch(() => {})
 }
@@ -25,7 +25,7 @@ function searchUser(e: Event) {
       userResults.value = []
       return
     }
-    mfetch(`/api/user/search?keyword=${k}`).then(r => r.json()).then((res) => {
+    mfetch(`/user/search?keyword=${k}`).then(r => r.json()).then((res) => {
       userResults.value = (res.data || []).filter((it: any) => !members?.value.find(m => m?.user?.name === it.name))
     }).catch(() => {})
   }, 400)
@@ -37,7 +37,7 @@ function onAddUser(id: number, inr: boolean) {
     setTimeout(() => notice.value = '', 2000)
     return
   }
-  mfetch('/api/project/adduser', {
+  mfetch('/project/adduser', {
     method: 'POST',
     body: JSON.stringify({ projectId: props.projectId, userId: id }),
     headers: { 'Content-Type': 'application/json' },
@@ -49,7 +49,7 @@ function onAddUser(id: number, inr: boolean) {
 }
 
 function onDel(userId: number) {
-  mfetch('/api/project/deluser', {
+  mfetch('/project/deluser', {
     method: 'POST',
     body: JSON.stringify({ projectId: props.projectId, userId }),
     headers: { 'Content-Type': 'application/json' },

@@ -14,7 +14,7 @@ function onSubmit(e: Event) {
   if (loading.value)
     return
   loading.value = true
-  mfetch('/api/user/login', {
+  mfetch('/user/login', {
     method: 'POST',
     credentials: 'include',
     body: JSON.stringify({ ...formData.value }),

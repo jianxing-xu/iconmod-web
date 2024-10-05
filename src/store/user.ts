@@ -14,7 +14,7 @@ export function hideLogin() {
 }
 
 export function getUserInfo() {
-  return mfetch('/api/user/info').then(res => res.json()).then((res) => {
+  return mfetch('/user/info').then(res => res.json()).then((res) => {
     userInfo.value = res.data
   }).catch(() => {})
 }

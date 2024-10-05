@@ -21,7 +21,7 @@ async function onSubmit() {
     return
   submitting.value = true
   try {
-    await (await mfetch('/api/project/create', {
+    await (await mfetch('/project/create', {
       method: 'POST',
       body: JSON.stringify(({
         name: formData.value.projectName,
